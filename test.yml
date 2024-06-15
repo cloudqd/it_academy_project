@@ -1,0 +1,9 @@
+- name: Ping Test
+  hosts: sfu_vm
+  become: yes
+
+  tasks:
+
+  - name: Task ping
+    ping:
+
