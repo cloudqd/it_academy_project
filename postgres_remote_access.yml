@@ -1,0 +1,31 @@
+- name: PostgreSQL install
+  hosts: sfu_vm
+  become: yes
+
+  vars_files:
+    - db_vars.yml
+
+  tasks:
+
+    - name: Change listen addresses
+      lineinfile:
+        path: "{{pg_data}}/postgresql.conf"
+        regexp: "listen_addresses ="
+        line: "listen_addresses = '*'" 
+      notify: restart postgres
+
+    - name: "Allow md5 connection for the db user"
+      postgresql_pg_hba:
+        dest: "{{pg_data}}/pg_hba.conf"
+        contype: host
+        databases: demo_data_base_small 
+        method: md5
+        users: "{{ db_user }}"
+        create: true
+      become: yes
+      become_user: postgres
+      notify: restart postgres
+
+  handlers:
+    - name: restart postgres
+      service: name=postgresql state=restarted
