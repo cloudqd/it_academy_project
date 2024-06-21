@@ -1,0 +1,37 @@
+- name: PostgreSQL database load
+  hosts: sfu_vm
+  become: yes
+
+  vars_files:
+    - postgres_vars.yml
+    - db_vars.yml
+
+  tasks:
+    - name: Copy zip SQL-script
+      copy:
+        src: "{{sql_script_src}}"
+        dest: /tmp/sql_script/
+      register: zip
+    
+    - name: Unzip SQL-script
+      unarchive:
+        src: "{{zip.dest}}"
+        dest: /tmp/sql_script/
+        remote_src: yes
+        list_files: yes
+      register: unzip
+
+    - name: Execute SQL-script from file
+      command: "psql -f {{unzip.dest}}/{{unzip.files[0]}} -U postgres"
+      become_user: postgres
+      
+    - name: Remove SQL-script
+      file:
+        path: /tmp/sql_script/
+        state: absent
+
+    - name: Rename database
+      postgresql_db: 
+        name: "demo"
+        state: rename
+        target: "{{db_name}}"

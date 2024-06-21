@@ -6,4 +6,9 @@
 
   - name: Task ping
     ping:
+    register: answer
+  
+  - name: Ping answer
+    debug:
+      msg: "{{ answer.ping }}"
 

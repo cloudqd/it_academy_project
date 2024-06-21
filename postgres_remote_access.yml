@@ -3,6 +3,7 @@
   become: yes
 
   vars_files:
+    - postgres_vars.yml
     - db_vars.yml
 
   tasks:

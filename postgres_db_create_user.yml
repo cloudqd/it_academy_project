@@ -1,0 +1,33 @@
+- name: PostgreSQL database load
+  hosts: sfu_vm
+  become: yes
+
+  vars_files:
+    - db_vars.yml
+
+  tasks:
+    - name: Create db user
+      postgresql_user:
+        state: present
+        name: "{{ db_user }}"
+        password: "{{ db_password }}"
+      become: yes
+      become_user: postgres
+
+    - name: Grant user access
+      community.postgresql.postgresql_privs:
+        db: "{{ db_name }}"
+        privs: ALL
+        type: database
+        role: "{{ db_user }}"
+      become: yes
+      become_user: postgres
+      register: q
+
+    - debug:
+        var: q
+
+  handlers:
+    - name: restart postgres
+      service: name=postgresql state=restarted
+

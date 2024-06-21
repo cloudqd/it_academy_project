@@ -1,1 +1,2 @@
+localhost ansible_host=27.0.0.1 ansible_connection=local
 sfu_vm ansible_host=10.3.26.102 ansible_user=root ansible_password=ParamPamPam!

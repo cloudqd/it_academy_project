@@ -4,18 +4,16 @@
 
   vars_files:
     - db_vars.yml
+    - postgres_vars.yml
 
   pre_tasks:
-    - name: Install packages
-      dnf: "name={{ item }} state=present"
-      with_items:
-        - postgresql15
-        - postgresql15-server
-
-    - name: Install Python packages
-      pip: "name={{ item }}  state=present"
-      with_items:
-        - psycopg2-binary
+    - name:
+      dnf:
+        name:
+          - python3-pip
+          - "@postgresql:15/client"
+          - "@postgresql:15/server"
+        state: present
 
   tasks:
     - name: Find out if PostgreSQL is initialized
@@ -23,8 +21,10 @@
         path: "{{pg_data}}/pg_hba.conf"
       register: postgres_data
 
-    - name: Initialize PostgreSQL with checksums 
-      shell: "initdb -D {{pg_data}} -k -U postgres --no-instructions`"
+    - name: Initialize PostgreSQL with checksums
+      become: yes
+      become_user: postgres 
+      shell: "initdb -D {{pg_data}} -k --no-instructions"
       when: not postgres_data.stat.exists
  
     - name: Start and enable services

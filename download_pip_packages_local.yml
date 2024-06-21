@@ -1,0 +1,11 @@
+- name: Download pip packages localy
+  hosts: localhost
+  become: yes
+
+  tasks:
+    - name: download
+      command:
+        cmd: "pip download {{item}} -d /root/ansible/pip_packages/"
+      with_items: 
+        - setuptools
+        - psycopg2-binary

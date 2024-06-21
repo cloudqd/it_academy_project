@@ -1,4 +1,3 @@
 db_user: sfu_student
 db_password: stud_password
-db_name: demo_data_base_small
-pg_data: /var/lib/pgsql/data
+db_name: demo_big_db

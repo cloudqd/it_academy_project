@@ -1,0 +1,3 @@
+pg_data: /var/lib/pgsql/data
+sql_script_src: /root/ansible/demo-big.zip
+sql_script_path: /tmp/sql_script/

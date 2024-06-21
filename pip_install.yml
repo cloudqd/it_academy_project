@@ -1,0 +1,28 @@
+- name: Install pip packages from local dir
+  hosts: sfu_vm
+  become: yes
+  
+  vars:
+    packages_src: /root/ansible/pip_packages/
+    packages_dest: /tmp/pip_packages
+
+  tasks:
+    - name: Copy files from local to remote
+      copy:
+        src: "{{packages_src}}"
+        dest: "{{packages_dest}}"
+    
+    - name: Create requirements file
+      shell:
+        chdir: "{{packages_dest}}"
+        cmd: 'ls *.whl > requirements.txt'
+    
+    - name: Install packages
+      pip:
+        chdir: "{{packages_dest}}"
+        requirements: "{{packages_dest}}/requirements.txt"
+        extra_args: "--no-index --find-links={{packages_dest}}/"    
+        executable: pip3.8
+
+
+        
